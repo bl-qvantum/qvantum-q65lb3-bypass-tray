@@ -9,7 +9,7 @@
 * [Fixing the MQTT credentials](#fixing-the-mqtt-credentials)
 * [Starting the PM2 background process](#starting-the-pm2-background-process)
 * [Code Discussion](#code-discussion)
-  - [The tray.json object](#the-tray.json-object)
+  - [The tray JSON object](#the-tray-json-object)
 
 ## Overview
 Blinky-Bus is a demonstration project on how to use Blinky-Lite with serial Bluetooth to communicate between the cube and tray. The function of the device is to turn on and off three LEDs. The Blinky-Lite tray software is written as a [Node-RED](https://nodered.org/) flow and can easily run on a Raspberry Pi.
@@ -195,7 +195,7 @@ The command will return with a command to paste that looks like:
 Paste and execute the command. Now the tray will start automatically on boot.
 
 ## Code Discussion
-### The tray.json object
+### The tray JSON object
 [(contents)](#table-of-contents)<br>
 The purpose of the Blinky-Lite tray is to package the data coming from the cube and send this data to the application box. Instead of sending many name-value pairs, the tray packages all of the cube data into a single [JSON object](https://www.w3schools.com/js/js_json_objects.asp). The definition of the tray JSON object is defined in the **tray.json** file.
 

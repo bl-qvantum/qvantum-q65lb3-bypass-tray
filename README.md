@@ -46,4 +46,12 @@ Once inside the bluetoothctl program enter:
 
     scan on
 
-A list of available bluetooth devices will start to be listed. Once you see your bluetooth MAC address
+A list of available bluetooth devices will start to be listed. Once you see the name of your HC06 devic that was setup in the [Blinky Bus Cube](https://github.com/Blinky-Lite-Exchange/blinky-bus-cube), turn the scan off:
+
+    scan off
+
+and pair the HC06 device
+
+    pair XX:XX:XX:XX:XX:XX
+
+where XX:XX:XX:XX:XX:XX is the MAC address of the device you saw on the scan list. The bluetoothctl program will ask you for the PIN number you setup in the [Blinky Bus Cube](https://github.com/Blinky-Lite-Exchange/blinky-bus-cube).

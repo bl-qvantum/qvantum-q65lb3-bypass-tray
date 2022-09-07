@@ -8,6 +8,7 @@
 * [Running Node RED](#running-node-red)
 * [Fixing the MQTT credentials](#fixing-the-mqtt-credentials)
 * [Starting the PM2 background process](#starting-the-pm2-background-process)
+* [Code Discussion](#code-discussion)
 
 ## Overview
 Blinky-Bus is a demonstration project on how to use Blinky-Lite with serial Bluetooth to communicate between the cube and tray. The function of the device is to turn on and off three LEDs. The Blinky-Lite tray software is written as a [Node-RED](https://nodered.org/) flow and can easily run on a Raspberry Pi.
@@ -191,3 +192,14 @@ The command will return with a command to paste that looks like:
     sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u pi --hp /home/pi
 
 Paste and execute the command. Now the tray will start automatically on boot.
+
+## Code Discussion
+[(contents)](#table-of-contents)<br>
+The purpose of the Blinky-Lite tray is to package the data coming from the cube and send this data to the application box. Instead of sending many name-value pairs, the tray packages all of the cube data into a single [JSON object](https://www.w3schools.com/js/js_json_objects.asp). The definition of the tray JSON object is defined in the **tray.json** file.
+
+<img src="doc/trayJson.png"/><br>
+
+* Trays with the same **type** should behave the same way.
+* The **name** value distinguishes trays of the same **type**
+  - Note that the **type** and **name** must match the [MQTTSUBSCRIBE ](#setup-the-environmental-file) environmental variable
+* The **arcPeriod** defines how often (in milli Seconds) the application box should archive the tray. 

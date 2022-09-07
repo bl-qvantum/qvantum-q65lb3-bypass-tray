@@ -16,6 +16,7 @@ You can obtain the source code for the cube by either cloning the repository or 
 <img src="doc/blinkyBusCube.jpg"/><br>
 
 ## Preparing the Raspberry Pi
+[(contents)](#table-of-contents)<br>
 Setup an Raspberry Pi with the latest [32 bit Raspberry Pi OS Lite](https://www.raspberrypi.com/software/operating-systems/). It is recommended to use the Raspberry Pi [Imager](https://www.raspberrypi.com/software/). Once the Raspberry Pi is up and running, SSH into the Raspberry Pi and download version 16.15.0 of [Node.js](https://nodejs.org/en/download/)
 
 For ARM7 (Raspberry Pi 3)
@@ -53,6 +54,7 @@ PM2 is a handy service to run programs in background and on boot. Next install P
     sudo npm install -g pm2
 
 ## Pair the Cube
+[(contents)](#table-of-contents)<br>
 Next pair the Bluetooth of the Raspberry Pi with the Bluetooth of the cube. From the Raspberry Pi:
 
     sudo bluetoothctl
@@ -88,6 +90,7 @@ To remember this binding, edit the rc.local file:
 and add the line  **sudo rfcomm bind 0** ***XX:XX:XX:XX:XX:XX*** right before the **exit 0** line in the file. To exit the nano editor type ***ctrl*** **x**
 
 ## Install the Tray
+[(contents)](#table-of-contents)<br>
 From the Raspberry Pi terminal, clone the tray repository or download the zip file from the green Code button on the [Github page](https://github.com/Blinky-Lite-Exchange/blinky-bus-tray).
 
 Change directory into the tray directory:
@@ -99,6 +102,7 @@ Install the code
     npm install
 
 ## Setup the environmental file
+[(contents)](#table-of-contents)<br>
 The **.env** file contains environmental variables that should not be shared. A template file **env** is stored on the Github repository Copy the env file to .env file
 
     cp env .env
@@ -118,6 +122,7 @@ The **.env** file should look like:
 You need to change the fields **aaaa**, **bbbb**, **cccc** to the appropriate values for the Blinky-Lite application Box you are going to connect to. You also need to pick a unique secret for the **dddd** field. This secret is used to [encrypt the MQTT credentials in Node-RED](https://discourse.nodered.org/t/your-flow-credentials-file-is-encrypted-using-a-system-generated-key/18382).
 
 ## Running Node RED
+[(contents)](#table-of-contents)<br>
 Before you run Node-RED, you need to change password in the *adminAuth* field in the **settings.js** file so you will be able to view and edit the tray flow from a browser. The *adminAuth* field in the **settings.js** file is shown below.  
 
     adminAuth: {
@@ -144,6 +149,7 @@ where ***AAA.BBB.CCC.DDD*** is the IP address of the Raspberry Pi and **61880** 
 <img src="doc/node-red-splash.png"/><br>
 
 ## Fixing the MQTT credentials
+[(contents)](#table-of-contents)<br>
 Enter the username and password defined in the adminAuth block of settings.js You will most likely see the following screen with an error message that the credentials could not be decrypted
 
 <img src="doc/node-red-cred-error.png"/><br>
@@ -167,6 +173,7 @@ The flow should be working with green boxes underneath the light purple MQTT nod
 <img src="doc/noderedWorking.png"/><br>
 
 ## Starting the PM2 background process
+[(contents)](#table-of-contents)<br>
 Return to the terminal on the Raspberry Pi and terminate the Node-RED script by typing ***ctrl c***. Start the PM2 script to run Node-RED in background:
 
     ./pm2.sh $(pwd)
@@ -183,4 +190,4 @@ The command will return with a command to paste that looks like:
 
     sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u pi --hp /home/pi
 
-Paste and execute the command. Now the tray will start automatically on boot. 
+Paste and execute the command. Now the tray will start automatically on boot.

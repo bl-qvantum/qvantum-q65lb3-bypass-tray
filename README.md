@@ -6,7 +6,7 @@
 * [Install the Tray](#install-the-tray)
 
 ## Overview
-Blinky-Bus is a demonstration project on how to use Blinky-Lite with serial Bluetooth to communicate between the cube and tray. The function of the device is to turn on and off three LEDs.
+Blinky-Bus is a demonstration project on how to use Blinky-Lite with serial Bluetooth to communicate between the cube and tray. The function of the device is to turn on and off three LEDs. The Blinky-Lite tray software is written as a [Node-RED](https://nodered.org/) flow and can easily run on a Raspberry Pi.
 
 You can obtain the source code for the cube by either cloning the repository or downloading a zip file from the green Code button on the [Github page](https://github.com/Blinky-Lite-Exchange/blinky-bus-tray).
 <img src="doc/blinkyBusCube.jpg"/><br>
@@ -84,6 +84,34 @@ To remember this binding, edit the rc.local file:
 and add the line  **sudo rfcomm bind 0** ***XX:XX:XX:XX:XX:XX*** right before the **exit 0** line in the file. To exit the nano editor type ***ctrl*** **x**
 
 ## Install the Tray
+From the Raspberry Pi terminal, clone the tray repository or download the zip file from the green Code button on the [Github page](https://github.com/Blinky-Lite-Exchange/blinky-bus-tray).
 
+Change directory into the tray directory:
 
-```
+    cd blinky-bus-tray
+
+Install the code
+
+    npm install
+
+### Setup the environmental file
+The **.env** file contains environmental variables that should not be shared. A template file **env** is stored on the Github repository Copy the env file to .env file
+
+    cp env .env
+https://nodered.org/
+The **.env** file should look like:
+
+    MQTTSUBSCRIBE=blinky-lite-v4/blinky-bus/01/setting/#
+    MQTTCLIENTID=blinky-bus-tray-01
+    MQTTSERVERIP=aaaa
+    MQTTUSERNAME=bbb
+    MQTTPASSWORD=ccc
+    SERIALPORT=/dev/rfcomm0
+    SERIALBUFSIZE=8
+    PM2NAME=blinky-bus-01
+    NODEREDCONFIGSECRET=dddd
+
+You need to change the fields **aaaa**, **bbbb**, **cccc** to the appropriate values for the Blinky-Lite application Box you are going to connect to. You also need to pick a unique secret for the **dddd** field. This secret is used to [encrypt the MQTT credentials in Node-RED](https://discourse.nodered.org/t/your-flow-credentials-file-is-encrypted-using-a-system-generated-key/18382).
+
+### Running Node RED
+Before you run Node-RED, you need to change the adminAuth field in the settings.js file so you will be able to view and edit the tray flow.

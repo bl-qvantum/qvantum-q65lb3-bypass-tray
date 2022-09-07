@@ -219,3 +219,12 @@ The purpose of the Blinky-Lite tray is to package the data coming from the cube 
     * an alarm value of 3 means the cube value is less than the *low* limit
     * an alarm value of 4 means the cube value is greater than the *hihi* limit
     * The **notify** object is used by the application box to send an SMS if there is an alarm
+
+### User-defined flow nodes
+In the Node-RED flow there are three nodes where the user can customize how the tray behaves and not disturb any of the background communication functionality.
+* Create Setting node
+* Create Readings node
+* Init Gizmo node
+
+These nodes are easily identified with a purple background and a yellow *Edit Me* label.
+<img src="doc/userNodes.png"/><br>

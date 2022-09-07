@@ -1,6 +1,16 @@
 # Blinky Bus Tray
-Blinky-Bus is a demonstration project on how to use Blinky-Lite with serial Bluetooth to communicate between the cube and tray. The function of the device is to turn on and off three LEDs.<br>
+## Table of contents
+* Overview
+* [Preparing the Raspberry Pi](#preparing-the-raspberry-pi)
+* [Pair the Cube](#pair-th-cube)
+* [Install the Tray](#install-the-tray)
+
+## Overview
+Blinky-Bus is a demonstration project on how to use Blinky-Lite with serial Bluetooth to communicate between the cube and tray. The function of the device is to turn on and off three LEDs.
+
+You can obtain the source code for the cube by either cloning the repository or downloading a zip file from the green Code button on the [Github page](https://github.com/Blinky-Lite-Exchange/blinky-bus-tray).
 <img src="doc/blinkyBusCube.jpg"/><br>
+
 ## Preparing the Raspberry Pi
 Setup an Raspberry Pi with the latest [32 bit Raspberry Pi OS Lite](https://www.raspberrypi.com/software/operating-systems/). It is recommended to use the Raspberry Pi [Imager](https://www.raspberrypi.com/software/). Once the Raspberry Pi is up and running, SSH into the Raspberry Pi and download version 16.15.0 of [Node.js](https://nodejs.org/en/download/)
 

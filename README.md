@@ -9,6 +9,7 @@
 * [Fixing the MQTT credentials](#fixing-the-mqtt-credentials)
 * [Starting the PM2 background process](#starting-the-pm2-background-process)
 * [Code Discussion](#code-discussion)
+  - [The tray.json object](#the-tray.json-object)
 
 ## Overview
 Blinky-Bus is a demonstration project on how to use Blinky-Lite with serial Bluetooth to communicate between the cube and tray. The function of the device is to turn on and off three LEDs. The Blinky-Lite tray software is written as a [Node-RED](https://nodered.org/) flow and can easily run on a Raspberry Pi.
@@ -194,6 +195,7 @@ The command will return with a command to paste that looks like:
 Paste and execute the command. Now the tray will start automatically on boot.
 
 ## Code Discussion
+### The tray.json object
 [(contents)](#table-of-contents)<br>
 The purpose of the Blinky-Lite tray is to package the data coming from the cube and send this data to the application box. Instead of sending many name-value pairs, the tray packages all of the cube data into a single [JSON object](https://www.w3schools.com/js/js_json_objects.asp). The definition of the tray JSON object is defined in the **tray.json** file.
 
@@ -202,4 +204,18 @@ The purpose of the Blinky-Lite tray is to package the data coming from the cube 
 * Trays with the same **type** should behave the same way.
 * The **name** value distinguishes trays of the same **type**
   - Note that the **type** and **name** must match the [MQTTSUBSCRIBE ](#setup-the-environmental-file) environmental variable
-* The **arcPeriod** defines how often (in milli Seconds) the application box should archive the tray. 
+* The **arcPeriod** defines how often (in milli Seconds) the application box should archive the tray.
+* The **timeStamp** will be used by the application box to time stamp the tray data. It is in JavaScript millSeconds since Jan 1 1970.
+* The **watchdog** is an optional cube object that the tray can increment to indicate the tray is functioning.
+* The **linkQuality** and **signalLevel** are optional cube objects that describe the strength of the wireless signal of the Raspberry Pi determined by **iwconfig**.
+* The **ledX** cube objects are specific to the cube and describe the LED's behavior.
+  - The **action** determines if it is a reading or a setting
+  - The **type** can be scalar (single number), vector [[],[]], or text
+  - The **value** and **unit** are self explanatory
+  - The **alarm** object is for scalar data types
+    * an alarm value of 0 means the cube value is between *low* and *high* limits
+    * an alarm value of 1 means the cube value is less than the *low* limit
+    * an alarm value of 2 means the cube value is greater than the *high* limit
+    * an alarm value of 3 means the cube value is less than the *low* limit
+    * an alarm value of 4 means the cube value is greater than the *hihi* limit
+    * The **notify** object is used by the application box to send an SMS if there is an alarm

@@ -10,6 +10,10 @@
 * [Starting the PM2 background process](#starting-the-pm2-background-process)
 * [Code Discussion](#code-discussion)
   - [The tray JSON object](#the-tray-json-object)
+  - [User-defined flow nodes](#user-defined-flow-nodes)
+    * [Create Settings Node](#create-settings-node)
+    * [Create Readings node](#create-readings-node)
+    * [Init Gizmo node](#init-gizmo-node)
 
 ## Overview
 Blinky-Bus is a demonstration project on how to use Blinky-Lite with serial Bluetooth to communicate between the cube and tray. The function of the device is to turn on and off three LEDs. The Blinky-Lite tray software is written as a [Node-RED](https://nodered.org/) flow and can easily run on a Raspberry Pi.
@@ -125,7 +129,7 @@ You need to change the fields **aaaa**, **bbbb**, **cccc** to the appropriate va
 
 ## Running Node RED
 [(contents)](#table-of-contents)<br>
-Before you run Node-RED, you need to change password in the *adminAuth* field in the **settings.js** file so you will be able to view and edit the tray flow from a browser. The *adminAuth* field in the **settings.js** file is shown below.  
+Before you run Node-RED, you need to change password in the *adminAuth* field in the **settings.js** file so you will be able to view and edit the tray flow from a browser. The *adminAuth* field in the **settings.js** file is shown below.
 
     adminAuth: {
         type: "credentials",
@@ -221,6 +225,7 @@ The purpose of the Blinky-Lite tray is to package the data coming from the cube 
     * The **notify** object is used by the application box to send an SMS if there is an alarm
 
 ### User-defined flow nodes
+[(contents)](#table-of-contents)<br>
 In the Node-RED flow there are three nodes where the user can customize how the tray behaves and not disturb any of the background communication functionality.
 * Create Setting node
 * Create Readings node
@@ -228,3 +233,41 @@ In the Node-RED flow there are three nodes where the user can customize how the 
 
 These nodes are easily identified with a purple background and a yellow *Edit Me* label.
 <img src="doc/userNodes.png"/><br>
+
+#### Create Settings Node
+[(contents)](#table-of-contents)<br>
+The Create Settings Node listens to the MQTT topic defined by the MQTTSUBSCRIBE environmental variable. The **#** wild card at the end of the MQTTSUBSCRIBE topic can take on four values
+* **setting**
+  - for setting a cube scalar value
+* **ping**
+  - will echo the tray back to the MQTT broker immediately
+* **config**
+  - to change the alarm configuration of a scalar cube
+* **reset**
+  - will reset the node-red tray process
+
+For the setting process the MQTT payload must be of the form
+
+    {cube:cube_name, value:x}
+
+where ***x*** is an number or a string. The user must edit the **Create Setting** node to setup up the behavior of the setting as shown below.
+<img src="doc/CreateSettingNodeCode.png"/><br>
+
+The settings can be of two types:
+* blinkyBus settings
+  - in which the user must specify the address of the blinkyBus setting.
+  - the setting is then routed to the BlinkyBus serial port.
+  - the setting value must be an integer
+* non-blinkyBus settings
+  - the user can do anything with the setting such as setting a cube object in a tray
+  - or other functionality
+
+#### Create Readings node
+[(contents)](#table-of-contents)<br>
+The Create Readings node takes data from BlinkyBus and populates the tray cub objects.
+<img src="doc/CreateReadingsNodeCode.png"/><br>
+
+#### Init Gizmo node
+[(contents)](#table-of-contents)<br>
+If the cube device returns a state value of 1, such as when the cube device is powered up, this node will be triggered and the node defines how the cube device should be initially configured
+<img src="doc/InitGizmoNodeCode.png"/><br>

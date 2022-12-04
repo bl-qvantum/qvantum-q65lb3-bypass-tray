@@ -162,6 +162,7 @@
         "broker": "$(MQTTSERVERIP)",
         "port": "1883",
         "clientid": "$(MQTTCLIENTID)",
+        "autoConnect": true,
         "usetls": false,
         "protocolVersion": "4",
         "keepalive": "60",
@@ -178,6 +179,7 @@
         "willQos": "0",
         "willPayload": "",
         "willMsg": {},
+        "userProps": "",
         "sessionExpiry": ""
     },
     {
@@ -204,7 +206,7 @@
         "type": "function",
         "z": "85e21fcb925ef32f",
         "name": "Save tray config in Memory",
-        "func": "global.set('settingInProgress', false);\nmsg.payload.watchdog.value = 0;\nglobal.set('tray', msg.payload);\nglobal.set('deviceInit', 0);\nreturn msg;",
+        "func": "global.set('settingInProgress', false);\nglobal.set('tray', msg.payload);\nglobal.set('deviceInit', 0);\nreturn msg;",
         "outputs": 0,
         "noerr": 0,
         "initialize": "",
@@ -488,7 +490,7 @@
         "type": "function",
         "z": "85e21fcb925ef32f",
         "name": "Readings Alarm Scan",
-        "func": "var newData = msg.payload;\nvar tray = global.get('tray');\ntray.linkQuality.value     = global.get('linkQuality');\ntray.signalLevel.value     = global.get('signalLevel');\nvar alarmFlagReading = scalarAlarmScan(tray, 'reading');\nvar alarmFlagSetting = scalarAlarmScan(tray, 'setting');\nvar newMsg   = null;\nvar newSettingMsg = null;\nif (msg.topic == 'newSetting')\n{\n    newSettingMsg = \n    {\n        topic: 'newSetting',\n        payload: true\n    }\n}\nif (newData)\n{\n    newMsg = \n    {\n        topic: 'newData',\n        payload: true\n    }\n}\nreturn [newMsg, newSettingMsg];\n\nfunction getActionArray(tray, type, actionType)\n{\n    var actionArray = [];\n    var keys = Object.keys(tray);\n    for (var ii = 0; ii < keys.length; ++ii)\n    {\n        if (tray[keys[ii]].hasOwnProperty('type'))\n        {\n            if (tray[keys[ii]].type == type)\n            {\n                if (tray[keys[ii]].action == actionType)\n                {\n                    actionArray.push(tray[keys[ii]]);\n                }\n            }\n        }\n    }\n    return actionArray;\n}\nfunction scalarAlarmScan(tray, actionType)\n{\n    var alarmFlag = false;\n    var actionArray = getActionArray(tray, 'scalar', actionType);\n    if (actionArray.length > 0)\n    {\n        for (var ii = 0; ii < actionArray.length; ++ii)\n        {\n            let oldAlarmValue = actionArray[ii].alarm.value;\n            actionArray[ii].alarm.value = 0;\n            if (!isNaN(actionArray[ii].value))\n            {\n                if (actionArray[ii].value <= actionArray[ii].alarm.limits.low)  actionArray[ii].alarm.value = 1;\n                if (actionArray[ii].value <= actionArray[ii].alarm.limits.lolo) actionArray[ii].alarm.value = 3;\n                if (actionArray[ii].value >= actionArray[ii].alarm.limits.high) actionArray[ii].alarm.value = 2;\n                if (actionArray[ii].value >= actionArray[ii].alarm.limits.hihi) actionArray[ii].alarm.value = 4;\n                if (actionArray[ii].alarm.value != oldAlarmValue) alarmFlag = true;\n            }\n        }\n    }\n    return alarmFlag;\n}\n",
+        "func": "var newData = msg.payload;\nvar tray = global.get('tray');\nvar alarmFlagReading = scalarAlarmScan(tray, 'reading');\nvar alarmFlagSetting = scalarAlarmScan(tray, 'setting');\nvar newMsg   = null;\nvar newSettingMsg = null;\nif (msg.topic == 'newSetting')\n{\n    newSettingMsg = \n    {\n        topic: 'newSetting',\n        payload: true\n    }\n}\nif (newData)\n{\n    newMsg = \n    {\n        topic: 'newData',\n        payload: true\n    }\n}\nreturn [newMsg, newSettingMsg];\n\nfunction getActionArray(tray, type, actionType)\n{\n    var actionArray = [];\n    var keys = Object.keys(tray);\n    for (var ii = 0; ii < keys.length; ++ii)\n    {\n        if (tray[keys[ii]].hasOwnProperty('type'))\n        {\n            if (tray[keys[ii]].type == type)\n            {\n                if (tray[keys[ii]].action == actionType)\n                {\n                    actionArray.push(tray[keys[ii]]);\n                }\n            }\n        }\n    }\n    return actionArray;\n}\nfunction scalarAlarmScan(tray, actionType)\n{\n    var alarmFlag = false;\n    var actionArray = getActionArray(tray, 'scalar', actionType);\n    if (actionArray.length > 0)\n    {\n        for (var ii = 0; ii < actionArray.length; ++ii)\n        {\n            let oldAlarmValue = actionArray[ii].alarm.value;\n            actionArray[ii].alarm.value = 0;\n            if (!isNaN(actionArray[ii].value))\n            {\n                if (actionArray[ii].value <= actionArray[ii].alarm.limits.low)  actionArray[ii].alarm.value = 1;\n                if (actionArray[ii].value <= actionArray[ii].alarm.limits.lolo) actionArray[ii].alarm.value = 3;\n                if (actionArray[ii].value >= actionArray[ii].alarm.limits.high) actionArray[ii].alarm.value = 2;\n                if (actionArray[ii].value >= actionArray[ii].alarm.limits.hihi) actionArray[ii].alarm.value = 4;\n                if (actionArray[ii].alarm.value != oldAlarmValue) alarmFlag = true;\n            }\n        }\n    }\n    return alarmFlag;\n}\n",
         "outputs": 2,
         "noerr": 0,
         "initialize": "// Code added here will be run once\n// whenever the node is started.\ncontext.set('lastAlarm', -1);",
@@ -551,7 +553,8 @@
         "z": "85e21fcb925ef32f",
         "name": "blinkybus setting in",
         "links": [
-            "4493527757138cdc"
+            "4493527757138cdc",
+            "66b74de4675278dd"
         ],
         "x": 55,
         "y": 380,
@@ -1372,107 +1375,6 @@
         ]
     },
     {
-        "id": "7c54db38ef42ea17",
-        "type": "inject",
-        "z": "85e21fcb925ef32f",
-        "name": "project",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": true,
-        "onceDelay": "1",
-        "topic": "project",
-        "payload": "PROJECT",
-        "payloadType": "env",
-        "x": 100,
-        "y": 1400,
-        "wires": [
-            [
-                "df7945d1e609440c"
-            ]
-        ]
-    },
-    {
-        "id": "df7945d1e609440c",
-        "type": "function",
-        "z": "85e21fcb925ef32f",
-        "name": "Save global env variables",
-        "func": "global.set(msg.topic,msg.payload);\nreturn null;",
-        "outputs": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 290,
-        "y": 1400,
-        "wires": []
-    },
-    {
-        "id": "0ad39c241b705258",
-        "type": "exec",
-        "z": "85e21fcb925ef32f",
-        "command": "iwconfig",
-        "addpay": false,
-        "append": "",
-        "useSpawn": "false",
-        "timer": "",
-        "oldrc": false,
-        "name": "",
-        "x": 720,
-        "y": 1400,
-        "wires": [
-            [
-                "b6b5acfa59ca717b"
-            ],
-            [],
-            []
-        ]
-    },
-    {
-        "id": "b2e05104b7f0df93",
-        "type": "inject",
-        "z": "85e21fcb925ef32f",
-        "name": "",
-        "repeat": "5",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 560,
-        "y": 1400,
-        "wires": [
-            [
-                "0ad39c241b705258"
-            ]
-        ]
-    },
-    {
-        "id": "b6b5acfa59ca717b",
-        "type": "function",
-        "z": "85e21fcb925ef32f",
-        "name": "Get Signal Quality",
-        "func": "var info = msg.payload;\nvar linkStartIndex  = info.indexOf('Link Quality=');\nvar levelStartIndex = info.indexOf('Signal level=');\nvar linkQuality = Number(info.substring(linkStartIndex + 13, linkStartIndex + 15));\nvar signalLevel =  Number(info.substring(levelStartIndex + 13, levelStartIndex + 16));\nvar ssid = info.substring(info.indexOf('ESSID') + 7);\nssid = ssid.substring(0,ssid.indexOf('\"'));\nvar val = {linkQuality : linkQuality, signalLevel: signalLevel, ssid:ssid};\nglobal.set('linkQuality',linkQuality);\nglobal.set('signalLevel', signalLevel);\nglobal.set('ssid', ssid);\nreturn {topic :'test',payload : val};",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "x": 900,
-        "y": 1400,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "501090a1fd5f88f5",
         "type": "link out",
         "z": "85e21fcb925ef32f",
@@ -1621,7 +1523,7 @@
         "z": "85e21fcb925ef32f",
         "g": "40e56362c23599cc",
         "name": "Init Gizmo",
-        "func": "var tray = global.get('tray');\nvar msgs = [];\nmsgs[0] = {\"address\":0,\"value\":0};\nmsgs[1] = {\"address\":1,\"value\":tray.led1.value};\nmsgs[2] = {\"address\":2,\"value\":tray.led2.value};\nmsgs[3] = {\"address\":3,\"value\":tray.led3.value};\n//must be the last!\nmsgs[4] = {\"address\":-1,\"value\":0};\nreturn {topic : 'initDevice', payload: msgs};\n",
+        "func": "var tray = global.get('tray');\nvar msgs = [];\nmsgs[0] = {\"address\":0,\"value\":0};\nmsgs[1] = {\"address\":2,\"value\":tray.relayState.value};\n//must be the last!\nmsgs[2] = {\"address\":-1,\"value\":0};\nreturn {topic : 'initDevice', payload: msgs};\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1641,7 +1543,7 @@
         "z": "85e21fcb925ef32f",
         "g": "cc88dacde90c32cd",
         "name": "Create Readings",
-        "func": "var tray = global.get('tray');\nvar newData = true;\ntray.led1.value        = msg.payload[1];\ntray.led2.value        = msg.payload[2];\ntray.led3.value        = msg.payload[3];\n\ntray.watchdog.value = tray.watchdog.value + 1;\nif (tray.watchdog.value > 32760) tray.watchdog.value = 0;\n\nvar writeTrayMsg = null;\n\nreturn  [{topic:msg.topic, payload:newData},writeTrayMsg]\n",
+        "func": "var tray = global.get('tray');\nvar newData = true;\n//node.warn(msg.payload);\ntray.watchdog.value     = msg.payload[1];\ntray.relayState.value   = msg.payload[2];\n\nvar writeTrayMsg = null;\n\nreturn  [{topic:msg.topic, payload:newData},writeTrayMsg]\n",
         "outputs": 2,
         "noerr": 0,
         "initialize": "",
@@ -1664,7 +1566,7 @@
         "z": "85e21fcb925ef32f",
         "g": "24d6701c4857e25e",
         "name": "Create Setting",
-        "func": "var tray = global.get('tray');\nvar blinkyBusSettingMsg = \n{\n    topic : msg.topic, \n    payload : { value: msg.payload.value,  'address': -1  } \n}\nvar blinkyBusMessage = false;\nswitch(msg.payload.cube)\n{\n    case 'led1':\n        blinkyBusSettingMsg.payload.address = 1;\n        blinkyBusMessage = true;\n        break;\n    case 'led2':\n        blinkyBusSettingMsg.payload.address = 2;\n        blinkyBusMessage = true;\n        break;\n    case 'led3':\n        blinkyBusSettingMsg.payload.address = 3;\n        blinkyBusMessage = true;\n        break;\n    case 'nonblinkyBusSetting':\n        tray.nonblinkyBusSetting.value  = msg.payload.value;\n        blinkyBusMessage = false;\n        break;\n    default:\n        break;\n}\nvar msgArray = [null,null,null];\nif (blinkyBusMessage)\n{\n    global.set('settingInProgress',true);\n    var settingInProgressMsg = {topic:'settingInProgress', payload:true};\n    msgArray = [blinkyBusSettingMsg, settingInProgressMsg, null];\n    \n}\nelse\n{\n    global.set('settingInProgress',false);\n    msgArray = [null,null,{topic:'settingDone', payload:true}];\n}\nreturn msgArray;",
+        "func": "var tray = global.get('tray');\nvar blinkyBusSettingMsg = \n{\n    topic : msg.topic, \n    payload : { value: msg.payload.value,  'address': -1  } \n}\nvar blinkyBusMessage = false;\nswitch(msg.payload.cube)\n{\n    case 'relayState':\n        blinkyBusSettingMsg.payload.address = 2;\n        blinkyBusMessage = true;\n        break;\n    case 'opState':\n        tray.opState.value  = msg.payload.value;\n        blinkyBusMessage = false;\n        break;\n    case 'startScheduleTime':\n        tray.startScheduleTime.value  = msg.payload.value;\n        blinkyBusMessage = false;\n        break;\n    case 'stopScheduleTime':\n        tray.stopScheduleTime.value  = msg.payload.value;\n        blinkyBusMessage = false;\n        break;\n    case 'maxRate':\n        tray.maxRate.value  = msg.payload.value;\n        blinkyBusMessage = false;\n        break;\n    case 'alias':\n        tray.alias.value  = msg.payload.value;\n        blinkyBusMessage = false;\n        break;\n    default:\n        break;\n}\nvar msgArray = [null,null,null];\nif (blinkyBusMessage)\n{\n    global.set('settingInProgress',true);\n    var settingInProgressMsg = {topic:'settingInProgress', payload:true};\n    msgArray = [blinkyBusSettingMsg, settingInProgressMsg, null];\n    \n}\nelse\n{\n    global.set('settingInProgress',false);\n    msgArray = [null,null,{topic:'settingDone', payload:true}];\n}\nreturn msgArray;",
         "outputs": 3,
         "noerr": 0,
         "initialize": "",
@@ -1730,8 +1632,273 @@
         "links": [
             "04d132d87ffeb91a"
         ],
-        "x": 815,
+        "x": 825,
         "y": 680,
         "wires": []
+    },
+    {
+        "id": "66b74de4675278dd",
+        "type": "link out",
+        "z": "85e21fcb925ef32f",
+        "name": "Set rheostatOff Pos",
+        "mode": "link",
+        "links": [
+            "4bddb9a0e424ebf4"
+        ],
+        "x": 645,
+        "y": 1440,
+        "wires": []
+    },
+    {
+        "id": "a5686202e36da5cb",
+        "type": "inject",
+        "z": "85e21fcb925ef32f",
+        "name": "Every 1 min",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "60",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 1440,
+        "wires": [
+            [
+                "6a88f7634e8fc265"
+            ]
+        ]
+    },
+    {
+        "id": "6a88f7634e8fc265",
+        "type": "switch",
+        "z": "85e21fcb925ef32f",
+        "name": "",
+        "property": "tray.opState.value",
+        "propertyType": "global",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "2",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 260,
+        "y": 1440,
+        "wires": [
+            [
+                "207da0b6559f534d"
+            ],
+            [
+                "5909aced1daa97d7"
+            ]
+        ]
+    },
+    {
+        "id": "207da0b6559f534d",
+        "type": "function",
+        "z": "85e21fcb925ef32f",
+        "name": "Schedule Relay Control",
+        "func": "var tray = global.get('tray');\nif (global.get('settingInProgress')) return null;\nif (global.get('deviceInit') != 0) return null;\nvar now = new Date();\nvar hours = now.getHours();\nvar relayState = 0;\nif (tray.startScheduleTime.value > tray.stopScheduleTime.value)\n{\n    if ((tray.startScheduleTime.value <= hours) && (hours < 24) ) relayState = 1;\n    if ((0 <= hours) && (hours < tray.stopScheduleTime.value) )   relayState = 1;\n}\nelse\n{\n    if ((tray.startScheduleTime.value <= hours) && (hours < tray.stopScheduleTime.value) ) relayState = 1;\n}\nif (relayState ==  tray.relayState.value) return null;\nreturn {topic : \"setting\", payload : {cube :\"relayState\", value: relayState} };",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 1420,
+        "wires": [
+            [
+                "66b74de4675278dd"
+            ]
+        ]
+    },
+    {
+        "id": "0fb5d239ff8c03ec",
+        "type": "inject",
+        "z": "85e21fcb925ef32f",
+        "name": "Every hour",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "0 0-23 * * *",
+        "once": false,
+        "onceDelay": "10",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 1660,
+        "wires": [
+            [
+                "5b0a111b6f9528ca"
+            ]
+        ]
+    },
+    {
+        "id": "5b0a111b6f9528ca",
+        "type": "delay",
+        "z": "85e21fcb925ef32f",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "2",
+        "timeoutUnits": "minutes",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 270,
+        "y": 1660,
+        "wires": [
+            [
+                "6d2392b1cb3fdc31"
+            ]
+        ]
+    },
+    {
+        "id": "5fa165dbb8cb5696",
+        "type": "inject",
+        "z": "85e21fcb925ef32f",
+        "name": "Init+20sec",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "5",
+        "topic": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 1600,
+        "wires": [
+            [
+                "6d2392b1cb3fdc31"
+            ]
+        ]
+    },
+    {
+        "id": "0b3a0ffb265a0a9d",
+        "type": "json",
+        "z": "85e21fcb925ef32f",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 300,
+        "y": 1760,
+        "wires": [
+            [
+                "f9fb1e5010e541ab"
+            ]
+        ]
+    },
+    {
+        "id": "f9fb1e5010e541ab",
+        "type": "function",
+        "z": "85e21fcb925ef32f",
+        "name": "Save espotPrice",
+        "func": "global.set('espotPrice',msg.payload)\nreturn msg;",
+        "outputs": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 1760,
+        "wires": []
+    },
+    {
+        "id": "6d2392b1cb3fdc31",
+        "type": "mqtt out",
+        "z": "85e21fcb925ef32f",
+        "name": "Spot Price Ping",
+        "topic": "$(SPOTPRICEPING)",
+        "qos": "0",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "79250bf3.365cc4",
+        "x": 450,
+        "y": 1600,
+        "wires": []
+    },
+    {
+        "id": "159b7d88cfaf8901",
+        "type": "mqtt in",
+        "z": "85e21fcb925ef32f",
+        "name": "Spot Price Reading",
+        "topic": "$(SPOTPRICEREADING)",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "79250bf3.365cc4",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 130,
+        "y": 1760,
+        "wires": [
+            [
+                "0b3a0ffb265a0a9d"
+            ]
+        ]
+    },
+    {
+        "id": "5909aced1daa97d7",
+        "type": "function",
+        "z": "85e21fcb925ef32f",
+        "name": "Max Rate Relay Control",
+        "func": "var tray = global.get('tray');\nif (global.get('settingInProgress')) return null;\nif (global.get('deviceInit') != 0) return null;\nvar relayState = 0;\nif (tray.maxRate.value < global.get('espotPrice').price.value)\n{\n    relayState = 1;\n}\nif (relayState ==  tray.relayState.value) return null;\nreturn {topic : \"setting\", payload : {cube :\"relayState\", value: relayState} };",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 1460,
+        "wires": [
+            [
+                "66b74de4675278dd"
+            ]
+        ]
     }
 ]

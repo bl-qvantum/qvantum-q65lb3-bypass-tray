@@ -1,12 +1,12 @@
 {
-  "type": "blinky-bus",
-  "name": "01",
+  "type": "qvantum-q65lb3-bypass",
+  "name": "simrishamn",
   "arcPeriod": 60000,
-  "timeStamp": 1662460494294,
+  "timeStamp": 1670166165147,
   "watchdog": {
     "action": "reading",
     "type": "scalar",
-    "value": 4,
+    "value": 169,
     "unit": "",
     "alarm": {
       "value": 0,
@@ -23,118 +23,103 @@
       }
     }
   },
-  "linkQuality": {
-    "action": "reading",
-    "type": "scalar",
-    "value": 70,
-    "unit": "/70",
-    "alarm": {
-      "value": 0,
-      "limits": {
-        "lolo": -1,
-        "low": -1,
-        "high": 100,
-        "hihi": 100
-      },
-      "notify": {
-        "name": "",
-        "number": "",
-        "time": 0
-      }
-    }
-  },
-  "signalLevel": {
-    "action": "reading",
-    "type": "scalar",
-    "value": -27,
-    "unit": "dBm",
-    "alarm": {
-      "value": 0,
-      "limits": {
-        "lolo": -100,
-        "low": -100,
-        "high": 30,
-        "hihi": 30
-      },
-      "notify": {
-        "name": "",
-        "number": "",
-        "time": 0
-      }
-    }
-  },
-  "led1": {
+  "relayState": {
     "action": "setting",
     "type": "scalar",
     "unit": "",
     "alarm": {
       "value": 0,
+      "limits": {
+        "lolo": -2,
+        "low": -1,
+        "high": 2,
+        "hihi": 3
+      },
+      "notify": {
+        "name": "",
+        "number": "",
+        "time": 0
+      }
+    },
+    "value": 0
+  },
+  "alias": {
+    "action": "setting",
+    "type": "string",
+    "value": "Autoseum"
+  },
+  "opState": {
+    "action": "setting",
+    "type": "scalar",
+    "value": "2",
+    "unit": "",
+    "alarm": {
+      "value": 0,
+      "limits": {
+        "lolo": -1,
+        "low": -1,
+        "high": 2.5,
+        "hihi": 3
+      },
+      "notify": {
+        "name": "",
+        "number": "",
+        "time": 0
+      }
+    }
+  },
+  "startScheduleTime": {
+    "action": "setting",
+    "type": "scalar",
+    "value": 5,
+    "unit": "hr",
+    "alarm": {
+      "value": 0,
+      "limits": {
+        "lolo": -1,
+        "low": -1,
+        "high": 24,
+        "hihi": 24
+      },
+      "notify": {
+        "name": "",
+        "number": "",
+        "time": 0
+      }
+    }
+  },
+  "stopScheduleTime": {
+    "action": "setting",
+    "type": "scalar",
+    "value": 7,
+    "unit": "hr",
+    "alarm": {
+      "value": 0,
+      "limits": {
+        "lolo": -1,
+        "low": -1,
+        "high": 24,
+        "hihi": 24
+      },
+      "notify": {
+        "name": "",
+        "number": "",
+        "time": 0
+      }
+    }
+  },
+  "maxRate": {
+    "action": "setting",
+    "type": "scalar",
+    "value": 3.3,
+    "unit": "SEK/kW-hr",
+    "alarm": {
+      "value": 4,
       "limits": {
         "lolo": 0,
-        "low": 0.5,
-        "high": 1.5,
-        "hihi": 2
-      },
-      "notify": {
-        "name": "",
-        "number": "",
-        "time": 0
-      }
-    },
-    "value": 1
-  },
-  "led2": {
-    "action": "setting",
-    "type": "scalar",
-    "unit": "",
-    "alarm": {
-      "value": 0,
-      "limits": {
-        "lolo": -1,
-        "low": -1,
+        "low": 0,
         "high": 2,
-        "hihi": 2
-      },
-      "notify": {
-        "name": "",
-        "number": "",
-        "time": 0
-      }
-    },
-    "value": 1
-  },
-  "led3": {
-    "action": "setting",
-    "type": "scalar",
-    "value": 1,
-    "unit": "",
-    "alarm": {
-      "value": 0,
-      "limits": {
-        "lolo": -1,
-        "low": -1,
-        "high": 2,
-        "hihi": 2
-      },
-      "notify": {
-        "name": "",
-        "number": "",
-        "time": 0
-      }
-    }
-  },
-  "nonModbusSetting": {
-    "action": "setting",
-    "type": "scalar",
-    "value": 0,
-    "unit": "",
-    "alarm": {
-      "value": 0,
-      "limits": {
-        "lolo": -1,
-        "low": -1,
-        "high": 2,
-        "hihi": 2
+        "hihi": 3
       },
       "notify": {
         "name": "",

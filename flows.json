@@ -161,7 +161,7 @@
         "name": "MQTT Broker",
         "broker": "$(MQTTSERVERIP)",
         "port": "1883",
-        "clientid": "$(MQTTCLIENTID)",
+        "clientid": "",
         "autoConnect": true,
         "usetls": false,
         "protocolVersion": "4",

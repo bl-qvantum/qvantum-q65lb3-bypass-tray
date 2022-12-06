@@ -2,11 +2,11 @@
   "type": "qvantum-q65lb3-bypass",
   "name": "simrishamn",
   "arcPeriod": 60000,
-  "timeStamp": 1670166165147,
+  "timeStamp": 1670302830729,
   "watchdog": {
     "action": "reading",
     "type": "scalar",
-    "value": 169,
+    "value": 10620,
     "unit": "",
     "alarm": {
       "value": 0,
@@ -41,7 +41,7 @@
         "time": 0
       }
     },
-    "value": 0
+    "value": 1
   },
   "alias": {
     "action": "setting",

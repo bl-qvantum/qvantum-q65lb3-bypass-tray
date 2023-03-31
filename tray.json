@@ -2,11 +2,11 @@
   "type": "qvantum-q65lb3-bypass",
   "name": "simrishamn",
   "arcPeriod": 60000,
-  "timeStamp": 1670302830729,
+  "timeStamp": 1678122033858,
   "watchdog": {
     "action": "reading",
     "type": "scalar",
-    "value": 10620,
+    "value": 18549,
     "unit": "",
     "alarm": {
       "value": 0,
@@ -41,7 +41,7 @@
         "time": 0
       }
     },
-    "value": 1
+    "value": 0
   },
   "alias": {
     "action": "setting",
@@ -111,10 +111,10 @@
   "maxRate": {
     "action": "setting",
     "type": "scalar",
-    "value": 3.3,
+    "value": 2.02,
     "unit": "SEK/kW-hr",
     "alarm": {
-      "value": 4,
+      "value": 2,
       "limits": {
         "lolo": 0,
         "low": 0,
